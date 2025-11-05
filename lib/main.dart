@@ -1,8 +1,11 @@
-import 'package:expense_tracker/widgets/expenses.dart';
+import 'package:expense_tracker/screens/fitness_screen.dart';
+import 'package:expense_tracker/screens/expenses.dart';
 import 'package:flutter/material.dart';
 import 'screens/splashscreen.dart';
 import 'screens/authscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: Color.fromARGB(255, 96, 59, 181),
@@ -11,13 +14,17 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
   seedColor: Color.fromARGB(255, 5, 99, 125),
 );
-void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
-  //   fn,
-  // ) {
-  runApp(
-    MaterialApp(
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const App());
+}
+
+class App extends StatelessWidget {
+  const App({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: kDarkColorScheme,
@@ -56,20 +63,18 @@ void main() {
           ),
         ),
       ),
-      home: AuthScreen(),
-      // home: StreamBuilder(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return SplashScreen();
-      //     }
-      //     if (snapshot.hasData) {
-      //       return const Expenses();
-      //     }
-      //     return const AuthScreen();
-      //   },
-      // ),
-    ),
-  );
-  //});
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen();
+          }
+          if (snapshot.hasData) {
+            return const Expenses();
+          }
+          return const AuthScreen();
+        },
+      ),
+    );
+  }
 }

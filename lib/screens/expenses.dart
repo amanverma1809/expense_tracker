@@ -3,6 +3,7 @@ import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -82,9 +83,15 @@ class _ExpensesState extends State<Expenses> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter ExpenseTracker'),
+        title: Text('ExpenseTracker'),
         actions: [
           IconButton(onPressed: _addExpenseTrackerValue, icon: Icon(Icons.add)),
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Icon(Icons.exit_to_app),
+          ),
         ],
       ),
       body: orientation == Orientation.portrait
